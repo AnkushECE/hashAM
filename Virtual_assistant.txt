@@ -1,0 +1,83 @@
+import speech_recognition as sr
+import pyttsx3
+import pywhatkit
+import webbrowser
+import datetime
+import subprocess
+import wikipedia
+import pyaudio
+import os
+
+machine = pyttsx3.init('sapi5')
+voices = machine.getProperty("voices")
+machine.setProperty("voice", voices[0].id)
+recognizer = sr.Recognizer()
+
+
+def speak(audio):
+    machine.say(audio)
+    machine.runAndWait()
+
+
+def wish_me():
+    hour = int(datetime.datetime.now().hour)
+    if hour >= 0 and hour < 12:
+        speak("Good Morning! Sir")
+    elif hour >= 12 and hour < 18:
+        speak("Good Afternoon! Sir")
+    else:
+        speak("Good Evening! Sir")
+    speak(" I am Liza. I am your virtual assistant. How can I assist you?")
+
+
+def take_audio_input():
+    with sr.Microphone() as mic:
+
+        recognizer.pause_threshold = 1
+        audio_recorder = recognizer.listen(mic)
+        print("I am Ready to hear you...")
+        print("Listening...")
+
+    try:
+
+        command = recognizer.recognize_google(
+            audio_recorder, language="en-in")  # using Google speech recognizer
+        print('You said:', command)          # to print the audio said by User
+
+    except Exception as ex:
+        print("Sorry!...please say that again... ")
+        return "None"
+
+    return command
+
+
+if __name__ == "__main__":
+    wish_me()
+
+    command = take_audio_input().lower()
+
+    if "wikipedia" in command:
+        speak("searching wikipedia.......")
+        command = command.replace("wikipedia", "")
+        results = wikipedia.summary(command, sentences=3)
+        print(results)
+        speak("According to wikipedia...")
+        speak(results)
+
+    elif "chrome" in command:
+        speak_chrome = "Openning Google Chrome..."
+        print(speak_chrome)
+        machine.say(speak_chrome)
+        machine.runAndWait()
+        webbrowser.open("https://www.google.com/")
+
+    elif 'youtube' in command:
+        speak_youtube = 'Opening youtube...'
+        print(speak_youtube)
+        machine.say(speak_youtube)
+        machine.runAndWait()
+        webbrowser.open('https://www.youtube.com/')
+
+    elif "nit durgapur" in command:
+        speak("Openning NIT Durgapur website")
+        webbrowser.open("https://nitdgp.ac.in/")
