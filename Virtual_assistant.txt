@@ -3,7 +3,6 @@ import pyttsx3
 import pywhatkit
 import webbrowser
 import datetime
-import subprocess
 import wikipedia
 import pyaudio
 import os
